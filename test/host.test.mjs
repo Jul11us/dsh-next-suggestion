@@ -583,6 +583,47 @@ test('ranking prefers grounded candidates, demotes repeats and keeps intents div
   assert.ok(!ranked[0].includes('npm test'), 'completed action is not the top suggestion')
 })
 
+test('open questions strip fenced code before entering the provider prompt', async () => {
+  const h = makeCtx()
+  apply(h.ctx, baseConfig)
+  h.emit('turn/start', { type: 'turn/start', seq: 10, data: { turn: 1 } })
+  h.emit('user/message', { type: 'user/message', seq: 11, data: { source: { kind: 'user' } } })
+  const questionText = 'Example:\n```js\nconst unpublishedDraft = "fictional manuscript"\n```\nInspect login.css next?'
+  h.emit('assistant/message', {
+    type: 'assistant/message',
+    seq: 12,
+    data: {
+      message: {
+        role: 'assistant',
+        content: [{ type: 'text', text: questionText }],
+      },
+    },
+  })
+  h.emit('turn/end', { type: 'turn/end', seq: 13, data: { reason: { kind: 'completed' } } })
+  await predict(h)
+  const prompt = h.calls[0].messages[0].content[0].text
+  assert.ok(prompt.includes('Inspect login.css next?'), 'open question is preserved')
+  assert.ok(prompt.includes('[code]'), 'fenced code is marked as omitted')
+  assert.ok(!prompt.includes('unpublishedDraft'), 'fenced code body is excluded')
+  assert.ok(!prompt.includes('fictional manuscript'), 'fenced string contents are excluded')
+  const replay = __testing.buildContext(makeMessages(), { question: questionText })
+  assert.ok(replay.question.includes('Inspect login.css next?'), 'replay question is preserved')
+  assert.ok(!replay.question.includes('unpublishedDraft'), 'raw replay questions receive the same code stripping')
+})
+
+test('unverified edits favor verification and a completed run enables shipping', () => {
+  const context = {
+    entities: ['login.css'],
+    actions: [{ kind: 'edit', target: 'src/login.css', status: 'completed' }],
+    changedFiles: ['src/login.css'],
+    runningJobs: [],
+  }
+  const candidates = ['Run npm test for login.css', 'Commit login.css changes']
+  assert.deepEqual(__testing.rankCandidates(candidates, context, 1), ['Run npm test for login.css'])
+  context.actions.push({ kind: 'run', target: 'npm test', status: 'completed' })
+  assert.deepEqual(__testing.rankCandidates(candidates, context, 1), ['Commit login.css changes'])
+})
+
 test('five generated candidates are reduced to maxCandidates', async () => {
   const h = makeCtx({
     reply:

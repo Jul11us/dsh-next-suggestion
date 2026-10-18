@@ -18,7 +18,7 @@
  *   node scripts/eval-replay.mjs --responses scripts/golden/responses.json
  *
  * Cases exported from a real session log may contain private text; keep them
- * out of git (scripts/golden/session-*.json is ignored).
+ * out of git (scripts/golden/*.json is ignored except fictional cases.json).
  */
 import fs from 'node:fs'
 import path from 'node:path'

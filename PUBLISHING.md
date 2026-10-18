@@ -18,7 +18,7 @@ node scripts/eval-replay.mjs --dry-run
 
 Review the `package.json` allowlist. Include host/client modules, locale metadata, bundle patch, icon, bilingual README, public documentation and illustrations, and license. Exclude credentials, DSH profiles, `node_modules`, tests, and private captures. The original local `docs/dock.png` capture is excluded from Git and npm.
 
-Replay cases exported from real sessions contain private conversation text. Keep `scripts/golden/session-*.json` and recorded responses out of git; only the fictional `scripts/golden/cases.json` is tracked.
+Replay cases exported from real sessions contain private conversation text. All JSON files in `scripts/golden/` are ignored except the fictional `cases.json`; keep exports and recorded responses in that directory. Exports saved elsewhere require their own exclusion and must not be committed.
 
 ## GitHub Release
 

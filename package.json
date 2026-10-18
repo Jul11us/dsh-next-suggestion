@@ -1,6 +1,6 @@
 {
   "name": "dsh-next-suggestion",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Context-aware next-instruction drafts for DeepSeek DSH. A quieter way to keep moving.",
   "icon": "./icon.svg",
   "type": "module",

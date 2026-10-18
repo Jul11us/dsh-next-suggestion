@@ -43,9 +43,9 @@ The plugin waits for at least two user turns. Thin context or greetings may prod
 
 ### Why the next step is concrete
 
-The host keeps a compact state packet for the completed turn: recent tool calls and results (name, target, success/failure), changed files, running or recent jobs, active goal/plan, open todos, and the assistant's open question. It never sends full tool outputs, attachment bodies, or file contents.
+The host keeps a compact state packet for the completed turn: recent tool calls and results (name, target, success/failure), changed files, running or recent jobs, active goal/plan, open todos, and the assistant's open question. It does not separately load full tool outputs, attachment bodies, or file contents into the prompt.
 
-The model is asked for up to five candidates. A local ranker then selects at most three by grounding (a real file, test, command, or function from the state), fit to the assistant's question, a state prior (for example, commit after passing changes; fix after a failed test), and intent diversity (change / verify / inspect / ship). This is why a suggestion can be both shorter and more specific than a generic "continue".
+The model is asked for up to five candidates. A local ranker then selects at most three by grounding (a file, test, command, or function named in the state), fit to the assistant's question, a state prior (for example, favor commit after a completed run with changes; favor fixes after a failed action), and intent diversity (change / verify / inspect / ship). This can make suggestions shorter and more specific than a generic "continue".
 
 ## Getting started
 
@@ -91,7 +91,7 @@ Automatic routing prefers models with lightweight names. When it falls back to a
 
 ## Context, with limits
 
-The plugin may send the session title, up to six open todos, up to six recent user/assistant turns, and a compact state packet (tool names and targets, success/failure, changed file paths, job labels, active goal/plan, and the assistant's open question) to your configured provider. It does **not** read tool output bodies, attachment bodies, or file contents into the prompt. Assistant prose is shortened and fenced code blocks are replaced with `[code]`. User message text can still contain pasted code or sensitive material.
+The plugin may send the session title, up to six open todos, up to six recent user/assistant turns, and a compact state packet (tool names and targets, success/failure, changed file paths, job labels, active goal/plan, and the assistant's open question) to your configured provider. It does **not separately load** tool output bodies, attachment bodies, or file contents into the prompt. Assistant prose is shortened and fenced code blocks are replaced with `[code]`. User messages, shell command text, goals, or todo labels can still contain pasted code or sensitive material.
 
 Common API-key/token patterns, bearer strings, long base64 content, and usernames in common home-directory paths are redacted before the request. **Redaction is best effort; it cannot recognize every secret or personal detail.** Review the provider you select and the conversation you use it with.
 
@@ -112,16 +112,20 @@ npm pack --dry-run
 
 # inspect the prompt of a replay case without spending tokens
 node scripts/eval-replay.mjs --dry-run
+```
 
+The commands above run from a source checkout. Optional replay evaluation with your own provider (PowerShell):
+
+```powershell
 # score top-1/top-3 against the message that actually followed a turn
-node scripts/export-golden.mjs <session.v4.jsonl.zstd> scripts/golden/session.json
+node scripts/export-golden.mjs "C:\path\to\session.v4.jsonl.zstd" scripts/golden/session.json
 $env:EVAL_BASE_URL="https://api.deepseek.com"
 $env:EVAL_API_KEY="..."
 $env:EVAL_MODEL="deepseek-chat"
 node scripts/eval-replay.mjs --cases scripts/golden/session.json
 ```
 
-`npm test` covers 26 host checks and 8 client checks, including the state packet, grounding/diversity ranking, job-failure ordering, timeout, cancellation, and the actual host response rendered by the client. The replay harness uses the shipped prompt, parser, and ranker; keep exported session cases out of git (they contain private conversation text). These checks do not certify every DSH version, live model response, or installer path. A slow provider, incomplete turn, insufficient context, or unavailable settings service can leave the dock empty.
+`npm test` covers 28 host checks and 8 client checks, including the state packet, grounding/diversity ranking, open-question code filtering, job-failure ordering, timeout, cancellation, and the actual host response rendered by the client. The replay harness uses the shipped prompt, parser, and ranker; keep exported session cases out of git (they contain private conversation text). These checks do not certify every DSH version, live model response, or installer path. A slow provider, incomplete turn, insufficient context, or unavailable settings service can leave the dock empty.
 
 ---
 

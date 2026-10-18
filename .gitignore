@@ -11,5 +11,5 @@ Thumbs.db
 docs/dock.png
 
 # Replay cases exported from real sessions contain private conversation text.
-scripts/golden/session-*.json
-scripts/golden/responses*.json
+scripts/golden/*.json
+!scripts/golden/cases.json
