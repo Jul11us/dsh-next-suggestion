@@ -9,3 +9,7 @@ coverage/
 Thumbs.db
 # Preserve the original local capture without publishing unrelated workspaces.
 docs/dock.png
+
+# Replay cases exported from real sessions contain private conversation text.
+scripts/golden/session-*.json
+scripts/golden/responses*.json

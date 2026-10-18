@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { EventEmitter } from 'node:events'
 import { Readable } from 'node:stream'
-import { apply } from '../lib/index.js'
+import { apply, __testing } from '../lib/index.js'
 
 const PREDICT = '/dsh-next-suggestion/predict'
 const CONFIG = '/dsh-next-suggestion/config'
@@ -492,6 +492,112 @@ test('a closed browser request cancels the model call', async () => {
   assert.ok(sawAbort, 'the model signal was aborted')
   assert.ok(Date.now() - started < 1000)
   assert.deepEqual(JSON.parse(res.body).candidates, [])
+})
+
+test('state packet carries concrete actions, failures and the open question', async () => {
+  const h = makeCtx({
+    reply:
+      '{"candidates":["修 login.test.ts 里失败的 3 个用例","先看 login.css 的 diff","在移动端宽度下验证 login.css","跑 npm test 看看还有没有别的失败","继续"]}',
+  })
+  apply(h.ctx, baseConfig)
+  h.emit('turn/start', { type: 'turn/start', seq: 10, data: { turn: 1 } })
+  h.emit('user/message', { type: 'user/message', seq: 11, data: { source: { kind: 'user' } } })
+  h.emit('assistant/message', {
+    type: 'assistant/message',
+    seq: 12,
+    data: {
+      message: {
+        role: 'assistant',
+        content: [{ type: 'text', text: '登录框改好了，但移动端还没验证。要我直接改吗？' }],
+      },
+    },
+  })
+  h.emit('tool/call', {
+    type: 'tool/call',
+    seq: 13,
+    data: { turn: 1, step: 1, callId: 'c1', name: 'edit', arguments: JSON.stringify({ file_path: 'src/login.css' }) },
+  })
+  h.emit('tool/result', {
+    type: 'tool/result',
+    seq: 14,
+    data: { message: { toolCallId: 'c1', isError: false }, meta: { cwd: 'C:\\proj' } },
+  })
+  h.emit('tool/call', {
+    type: 'tool/call',
+    seq: 15,
+    data: { turn: 1, step: 1, callId: 'c2', name: 'pwsh', arguments: JSON.stringify({ command: 'npm test' }) },
+  })
+  h.emit('job/registered', {
+    type: 'job/registered',
+    seq: 16,
+    data: { jobId: 'j1', label: 'npm test', kind: 'pwsh', toolCall: { callId: 'c2' } },
+  })
+  h.emit('job/settled', {
+    type: 'job/settled',
+    seq: 17,
+    data: {
+      jobId: 'j1',
+      label: 'npm test',
+      kind: 'pwsh',
+      status: 'completed',
+      detail: 'exit code: 1',
+      toolCall: { callId: 'c2' },
+    },
+  })
+  h.emit('tool/result', {
+    type: 'tool/result',
+    seq: 18,
+    data: { message: { toolCallId: 'c2', isError: false } },
+  })
+  h.emit('turn/end', { type: 'turn/end', seq: 20, data: { reason: { kind: 'completed' } } })
+
+  const data = await predict(h)
+  assert.ok(data.candidates.length >= 1)
+  const prompt = h.calls[0].messages[0].content[0].text
+  assert.ok(prompt.includes('Recent state:'), 'state section present')
+  assert.ok(prompt.includes('edit src/login.css [completed]'), 'edit action present')
+  assert.ok(prompt.includes('run npm test [failed]'), 'job failure survives the generic tool result')
+  assert.ok(prompt.includes('Changed files: src/login.css'), 'changed file present')
+  assert.ok(prompt.includes('The assistant is waiting for an answer to'), 'open question present')
+  assert.ok(!data.candidates.includes('继续'), 'banned candidate dropped')
+})
+
+test('ranking prefers grounded candidates, demotes repeats and keeps intents diverse', () => {
+  const context = {
+    entities: ['login.css', 'login.test.ts', 'npm test'],
+    actions: [{ kind: 'run', target: 'npm test', status: 'failed' }],
+    question: '要我直接改吗？',
+    todos: [],
+    changedFiles: ['src/login.css'],
+    state: [],
+  }
+  const ranked = __testing.rankCandidates(
+    ['继续', '跑 npm test', '先看 login.css 的 diff', '在移动端宽度下验证 login.css', '修 login.test.ts 里失败的 3 个用例'],
+    context,
+    3,
+  )
+  assert.equal(ranked.length, 3)
+  assert.ok(ranked.includes('先看 login.css 的 diff'))
+  assert.ok(ranked.includes('修 login.test.ts 里失败的 3 个用例'))
+  assert.ok(!ranked.includes('继续'))
+  assert.ok(!ranked[0].includes('npm test'), 'completed action is not the top suggestion')
+})
+
+test('five generated candidates are reduced to maxCandidates', async () => {
+  const h = makeCtx({
+    reply:
+      '{"candidates":["修 login.test.ts 里失败的 3 个用例","先看 login.css 的 diff","在移动端宽度下验证 login.css","跑 npm test 看看还有没有别的失败","给我看 login.css 的 diff"]}',
+  })
+  apply(h.ctx, { ...baseConfig, maxCandidates: 2 })
+  seedTurn(h)
+  const data = await predict(h)
+  assert.equal(data.candidates.length, 2)
+})
+
+test('ASCII entity matching respects token boundaries', () => {
+  assert.equal(__testing.mentions('把 formatTimestamp 的调用点列出来', 'timestamp'), false)
+  assert.equal(__testing.mentions('先看 timestamp.ts 的实现', 'timestamp'), true)
+  assert.equal(__testing.mentions('把 formatTimestamp 的调用点列出来', 'formatTimestamp'), true)
 })
 
 test('config route reports the sanitized settings', async () => {

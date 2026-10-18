@@ -11,13 +11,18 @@ npm ci --ignore-scripts
 npm test
 npm pack --dry-run
 git diff --check
+
+# inspect the replay prompt without provider spend
+node scripts/eval-replay.mjs --dry-run
 ```
 
 Review the `package.json` allowlist. Include host/client modules, locale metadata, bundle patch, icon, bilingual README, public documentation and illustrations, and license. Exclude credentials, DSH profiles, `node_modules`, tests, and private captures. The original local `docs/dock.png` capture is excluded from Git and npm.
 
+Replay cases exported from real sessions contain private conversation text. Keep `scripts/golden/session-*.json` and recorded responses out of git; only the fictional `scripts/golden/cases.json` is tracked.
+
 ## GitHub Release
 
-1. Update version and lockfile. Keep README download URLs in sync.
+1. Update version and lockfile. Keep the README `releases/latest` link in sync.
 2. Complete checks, commit, and push to `main`.
 3. Confirm GitHub Actions passes for that exact commit.
 4. Tag the verified commit with the version.

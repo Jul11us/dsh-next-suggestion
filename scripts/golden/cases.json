@@ -1,0 +1,117 @@
+{
+  "cases": [
+    {
+      "id": "login-mobile-failure",
+      "messages": [
+        {
+          "role": "user",
+          "source": { "kind": "user" },
+          "content": [{ "type": "text", "text": "修一下登录页的样式问题" }]
+        },
+        {
+          "role": "assistant",
+          "content": [{ "type": "text", "text": "问题在 login.css。要我直接改吗？" }]
+        },
+        {
+          "role": "user",
+          "source": { "kind": "user" },
+          "content": [{ "type": "text", "text": "先改移动端登录框，改完跑测试" }]
+        },
+        {
+          "role": "assistant",
+          "content": [{ "type": "text", "text": "登录框改好了，但移动端还没验证。测试还有 3 个失败在 login.test.ts。" }]
+        }
+      ],
+      "tracker": {
+        "title": "修登录页移动端样式",
+        "todos": [{ "content": "修移动端登录框", "status": "in_progress" }],
+        "actions": [
+          { "kind": "read", "target": "src/login.css", "status": "completed" },
+          { "kind": "edit", "target": "src/login.css", "status": "completed" },
+          { "kind": "read", "target": "src/login.test.ts", "status": "completed" },
+          { "kind": "run", "target": "npm test", "status": "failed", "detail": "exit code: 1" }
+        ],
+        "changedFiles": ["src/login.css"],
+        "jobs": [],
+        "lastJob": { "label": "npm test", "status": "failed", "detail": "exit code: 1" },
+        "question": "",
+        "cwd": "C:\\proj"
+      },
+      "actual": "把 login.test.ts 里失败的 3 个用例修了"
+    },
+    {
+      "id": "formatdate-callers",
+      "messages": [
+        {
+          "role": "user",
+          "source": { "kind": "user" },
+          "content": [{ "type": "text", "text": "看下 util 包里谁调用了 formatDate" }]
+        },
+        {
+          "role": "assistant",
+          "content": [{ "type": "text", "text": "util 包里没有 formatDate；最接近的是 time 模块的 formatTimestamp。" }]
+        },
+        {
+          "role": "user",
+          "source": { "kind": "user" },
+          "content": [{ "type": "text", "text": "那先看 time 模块" }]
+        },
+        {
+          "role": "assistant",
+          "content": [{ "type": "text", "text": "time 模块只做时区校验和规范化，不负责格式化。" }]
+        }
+      ],
+      "tracker": {
+        "title": "查 formatDate 调用点",
+        "todos": [{ "content": "定位时间格式化入口", "status": "in_progress" }],
+        "actions": [
+          { "kind": "inspect", "target": "formatDate in packages/util", "status": "completed" },
+          { "kind": "read", "target": "packages/util/time/timestamp.ts", "status": "completed" }
+        ],
+        "changedFiles": [],
+        "jobs": [],
+        "lastJob": null,
+        "question": "要我按 formatTimestamp 再查一遍吗？",
+        "cwd": "C:\\proj"
+      },
+      "actual": "把 formatTimestamp 的调用点列出来"
+    },
+    {
+      "id": "commit-passing-changes",
+      "messages": [
+        {
+          "role": "user",
+          "source": { "kind": "user" },
+          "content": [{ "type": "text", "text": "把登录框样式改一下" }]
+        },
+        {
+          "role": "assistant",
+          "content": [{ "type": "text", "text": "已改 login.css。" }]
+        },
+        {
+          "role": "user",
+          "source": { "kind": "user" },
+          "content": [{ "type": "text", "text": "跑下测试" }]
+        },
+        {
+          "role": "assistant",
+          "content": [{ "type": "text", "text": "npm test 通过，12 个用例全绿。" }]
+        }
+      ],
+      "tracker": {
+        "title": "修登录框样式",
+        "todos": [],
+        "actions": [
+          { "kind": "edit", "target": "src/login.css", "status": "completed" },
+          { "kind": "run", "target": "npm test", "status": "completed", "detail": "exit code: 0" }
+        ],
+        "changedFiles": ["src/login.css"],
+        "jobs": [],
+        "lastJob": { "label": "npm test", "status": "completed", "detail": "exit code: 0" },
+        "question": "",
+        "cwd": "C:\\proj"
+      },
+      "actual": "提交这些改动并写个 commit"
+    }
+  ]
+}

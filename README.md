@@ -23,11 +23,11 @@ Suggestions are optional. **A click fills your draft; it never sends a message o
 
 | A little help | A clear boundary |
 | :--- | :--- |
-| **Relevant next steps** | Uses recent conversation text and open todos to propose short, concrete instructions. |
+| **Relevant next steps** | Uses recent conversation text, open todos, tool outcomes, changed files, and the assistant's open question to propose short, concrete instructions. |
 | **Your words, your decision** | One click fills the composer and returns focus. Edit before sending. |
 | **Quiet by design** | Hides as you type, open the command menu, change sessions, or press Escape in the composer. Results arriving after 1.5 seconds are discarded. |
 | **A lighter model preference** | Auto mode favors names such as `flash`, `mini`, and `lite`. This is a naming heuristic, not a live price comparison. |
-| **Small, explicit context** | Sends limited text to a provider configured in DSH, with common secret patterns and path usernames redacted. |
+| **Small, explicit context** | Sends limited text and tool names/targets—not tool outputs—to a provider configured in DSH, with common secret patterns and path usernames redacted. |
 
 ![Illustrative suggestion dock and composer with example content.](docs/readme/preview.png)
 
@@ -41,13 +41,19 @@ Suggestions are optional. **A click fills your draft; it never sends a message o
 
 The plugin waits for at least two user turns. Thin context or greetings may produce no suggestions. Dismissed suggestions are filtered in page memory, capped at 20 entries per session across 50 tracked browser sessions.
 
+### Why the next step is concrete
+
+The host keeps a compact state packet for the completed turn: recent tool calls and results (name, target, success/failure), changed files, running or recent jobs, active goal/plan, open todos, and the assistant's open question. It never sends full tool outputs, attachment bodies, or file contents.
+
+The model is asked for up to five candidates. A local ranker then selects at most three by grounding (a real file, test, command, or function from the state), fit to the assistant's question, a state prior (for example, commit after passing changes; fix after a failed test), and intent diversity (change / verify / inspect / ship). This is why a suggestion can be both shorter and more specific than a generic "continue".
+
 ## Getting started
 
 **Requirements:** Node.js **22.19 or later**, DeepSeek DSH **`>=0.2.1-rc.2 <0.3.0`**, a Web GUI or Desktop client, and a configured model provider. The original development baseline was DSH `0.2.1-rc.2`; the full range has not been tested against every release.
 
 ### Install the release package
 
-1. Download [`dsh-next-suggestion-0.1.0.tgz`](https://github.com/Jul11us/dsh-next-suggestion/releases/download/v0.1.0/dsh-next-suggestion-0.1.0.tgz), or copy its download URL.
+1. Open the [latest release](https://github.com/Jul11us/dsh-next-suggestion/releases/latest) and copy the `.tgz` asset URL.
 2. In DSH, open **Plugins → Add plugin / Install third-party plugin** and enter the `.tgz` download URL in the package field.
 3. Enable **Next instruction suggestions**, restart DSH, then refresh the client.
 
@@ -85,7 +91,7 @@ Automatic routing prefers models with lightweight names. When it falls back to a
 
 ## Context, with limits
 
-The plugin may send the session title, up to six open todos, and up to six recent user/assistant turns to your configured provider. Assistant prose is shortened and fenced code blocks are replaced with `[code]`. User message text can still contain pasted code or sensitive material.
+The plugin may send the session title, up to six open todos, up to six recent user/assistant turns, and a compact state packet (tool names and targets, success/failure, changed file paths, job labels, active goal/plan, and the assistant's open question) to your configured provider. It does **not** read tool output bodies, attachment bodies, or file contents into the prompt. Assistant prose is shortened and fenced code blocks are replaced with `[code]`. User message text can still contain pasted code or sensitive material.
 
 Common API-key/token patterns, bearer strings, long base64 content, and usernames in common home-directory paths are redacted before the request. **Redaction is best effort; it cannot recognize every secret or personal detail.** Review the provider you select and the conversation you use it with.
 
@@ -103,9 +109,19 @@ Two small JavaScript modules, public DSH extension points, and no build step. Th
 npm ci --ignore-scripts
 npm test
 npm pack --dry-run
+
+# inspect the prompt of a replay case without spending tokens
+node scripts/eval-replay.mjs --dry-run
+
+# score top-1/top-3 against the message that actually followed a turn
+node scripts/export-golden.mjs <session.v4.jsonl.zstd> scripts/golden/session.json
+$env:EVAL_BASE_URL="https://api.deepseek.com"
+$env:EVAL_API_KEY="..."
+$env:EVAL_MODEL="deepseek-chat"
+node scripts/eval-replay.mjs --cases scripts/golden/session.json
 ```
 
-Tests exercise host behavior and client interactions with test doubles. They do not certify every DSH version, live model response, or installer path. A slow provider, incomplete turn, insufficient context, or unavailable settings service can leave the dock empty.
+`npm test` covers 26 host checks and 8 client checks, including the state packet, grounding/diversity ranking, job-failure ordering, timeout, cancellation, and the actual host response rendered by the client. The replay harness uses the shipped prompt, parser, and ranker; keep exported session cases out of git (they contain private conversation text). These checks do not certify every DSH version, live model response, or installer path. A slow provider, incomplete turn, insufficient context, or unavailable settings service can leave the dock empty.
 
 ---
 
