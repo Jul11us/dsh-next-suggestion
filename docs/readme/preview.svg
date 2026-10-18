@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="850" viewBox="0 0 1600 850" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">A considered next step — illustrative dsh-next-suggestion interface</title>
+  <desc id="desc">Illustrative interface using example content, not a product screenshot. After an assistant response, three optional suggestions appear: Review the diff, Run the focused tests, and Draft the release notes. The first is selected and fills the composer. It is not sent automatically; the user can refine the draft and choose when to send.</desc>
+  <rect width="1600" height="850" fill="#F5F2EB"/>
+  <path d="M78 104H1522M78 765H1522" stroke="#17201D" stroke-opacity=".22"/>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="80" y="70" fill="#17201D" font-size="14" font-weight="600" letter-spacing="-.2">dsh-next-suggestion</text>
+    <text x="1522" y="69" text-anchor="end" fill="#53615A" font-size="10" letter-spacing="1.8">THE NEXT STEP, AT YOUR PACE.</text>
+  </g>
+  <text x="78" y="170" fill="#365D4B" font-family="Arial, Helvetica, sans-serif" font-size="10" letter-spacing="2.1">LESS FRICTION. MORE INTENTION.</text>
+  <g fill="#17201D" font-family="Georgia, 'Times New Roman', serif" font-size="59" letter-spacing="-2.7">
+    <text x="74" y="258">A considered</text>
+    <text x="74" y="323">next step.</text>
+  </g>
+  <g fill="#53615A" font-family="Arial, Helvetica, sans-serif" font-size="16">
+    <text x="80" y="377">A few useful possibilities</text>
+    <text x="80" y="402">after an assistant turn.</text>
+  </g>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <path d="M80 454H380" stroke="#17201D" stroke-opacity=".16"/>
+    <text x="80" y="491" fill="#365D4B" font-size="10" letter-spacing="1.7">01 / SUGGEST</text>
+    <text x="80" y="517" fill="#53615A" font-size="14">One to three optional candidates.</text>
+    <text x="80" y="566" fill="#365D4B" font-size="10" letter-spacing="1.7">02 / REFINE</text>
+    <text x="80" y="592" fill="#53615A" font-size="14">Choose one to fill your draft.</text>
+    <text x="80" y="641" fill="#365D4B" font-size="10" letter-spacing="1.7">03 / SEND WHEN READY</text>
+    <text x="80" y="667" fill="#53615A" font-size="14">You keep the final say.</text>
+  </g>
+  <rect x="460" y="145" width="1062" height="570" rx="12" fill="#FDFCF8" stroke="#C8CEC6"/>
+  <path d="M460 200H1522" stroke="#DDE1D9"/>
+  <circle cx="490" cy="173" r="4" fill="#365D4B"/>
+  <text x="505" y="177" fill="#17201D" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="600">Sample project</text>
+  <text x="1495" y="177" text-anchor="end" fill="#67746B" font-family="Arial, Helvetica, sans-serif" font-size="10" letter-spacing="1.5">CONVERSATION</text>
+  <rect x="505" y="240" width="32" height="32" rx="8" fill="#E9EDE5"/>
+  <path d="M513 256H529M523 250L529 256L523 262" stroke="#365D4B" stroke-width="1.5" stroke-linejoin="miter"/>
+  <text x="555" y="260" fill="#365D4B" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="600" letter-spacing="1.8">ASSISTANT</text>
+  <text x="555" y="305" fill="#17201D" font-family="Arial, Helvetica, sans-serif" font-size="24" letter-spacing="-.6">The refactor is ready.</text>
+  <text x="555" y="340" fill="#17201D" font-family="Arial, Helvetica, sans-serif" font-size="24" letter-spacing="-.6">Three focused checks remain.</text>
+  <text x="555" y="375" fill="#67746B" font-family="Arial, Helvetica, sans-serif" font-size="14">Review the changes, verify the behavior, then prepare the release.</text>
+  <path d="M505 413H1477" stroke="#E0E4DB"/>
+  <text x="505" y="448" fill="#53615A" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="600" letter-spacing="1.7">POSSIBLE NEXT INSTRUCTIONS</text>
+  <text x="1477" y="448" text-anchor="end" fill="#8A948B" font-family="Arial, Helvetica, sans-serif" font-size="10" letter-spacing="1.5">OPTIONAL · 3</text>
+  <rect x="505" y="468" width="245" height="44" rx="7" fill="#365D4B"/>
+  <text x="523" y="495" fill="#FDFCF8" font-family="Arial, Helvetica, sans-serif" font-size="13">Review the diff</text>
+  <path d="M719 486L724 491L733 482" stroke="#FDFCF8" stroke-width="1.5"/>
+  <rect x="762" y="468" width="300" height="44" rx="7" stroke="#CCD3C8"/>
+  <text x="780" y="495" fill="#36443B" font-family="Arial, Helvetica, sans-serif" font-size="13">Run the focused tests</text>
+  <path d="M1030 484V496M1024 490H1036" stroke="#879381" stroke-width="1.1"/>
+  <rect x="1074" y="468" width="403" height="44" rx="7" stroke="#CCD3C8"/>
+  <text x="1092" y="495" fill="#36443B" font-family="Arial, Helvetica, sans-serif" font-size="13">Draft the release notes</text>
+  <path d="M1445 484V496M1439 490H1451" stroke="#879381" stroke-width="1.1"/>
+  <rect x="505" y="544" width="972" height="112" rx="10" fill="#FDFCF8" stroke="#AAB9A9"/>
+  <text x="525" y="574" fill="#8A948B" font-family="Arial, Helvetica, sans-serif" font-size="9" letter-spacing="1.8">YOUR DRAFT</text>
+  <text x="525" y="608" fill="#17201D" font-family="Arial, Helvetica, sans-serif" font-size="17">Review the diff</text>
+  <path d="M641 592V612" stroke="#365D4B" stroke-width="1.2"/>
+  <rect x="1422" y="600" width="36" height="36" rx="8" fill="#365D4B"/>
+  <path d="M1440 625V611M1434 617L1440 611L1446 617" stroke="#FDFCF8" stroke-width="1.6" stroke-linejoin="round"/>
+  <text x="505" y="684" fill="#67746B" font-family="Arial, Helvetica, sans-serif" font-size="11">Selecting a suggestion fills the composer. Nothing is sent automatically.</text>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="80" y="805" fill="#53615A" font-size="11">Illustrative interface · example content</text>
+    <text x="1522" y="805" text-anchor="end" fill="#53615A" font-size="10" letter-spacing="1.5">SUGGEST → REFINE → SEND</text>
+  </g>
+</svg>

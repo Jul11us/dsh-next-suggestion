@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Next instruction suggestions",
+    "description": "Predict 1-3 concrete next instructions and place them above the composer."
+  }
+}

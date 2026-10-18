@@ -1,0 +1,13 @@
+# dsh-next-suggestion bundle layer.
+# The bundle inserts its own package as the single Loader row; that row carries
+# both the Host half (lib/index.js) and the browser half (lib/client.js).
+- insert:
+    - id: next-suggestion
+      name: dsh-next-suggestion
+      config:
+        enabled: true
+        maxCandidates: 3
+        provider: ''
+        model: ''
+        timeoutMs: 8000
+        debug: false

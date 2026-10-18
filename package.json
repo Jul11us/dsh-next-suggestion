@@ -1,0 +1,70 @@
+{
+  "name": "dsh-next-suggestion",
+  "version": "0.1.0",
+  "description": "Context-aware next-instruction drafts for DeepSeek DSH. A quieter way to keep moving.",
+  "icon": "./icon.svg",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json"
+  },
+  "files": [
+    "lib",
+    "locale",
+    "docs/readme",
+    "docs/ARCHITECTURE.md",
+    "icon.svg",
+    "cordis.patch.yml",
+    "README.md",
+    "README.zh-CN.md",
+    "PUBLISHING.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22.19",
+    "dsh": ">=0.2.1-rc.2 <0.3.0"
+  },
+  "dsh": {
+    "manifestVersion": 1,
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  },
+  "dependencies": {
+    "@deepseek-ai/schemastery": "3.18.5"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "node test/host.test.mjs && node test/client.test.mjs"
+  },
+  "devDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "jsdom": "^25.0.1"
+  },
+  "keywords": [
+    "deepseek",
+    "dsh",
+    "dsh-plugin",
+    "composer",
+    "prompt-suggestions",
+    "ai-assistant"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jul11us/dsh-next-suggestion.git"
+  },
+  "homepage": "https://github.com/Jul11us/dsh-next-suggestion#readme",
+  "bugs": {
+    "url": "https://github.com/Jul11us/dsh-next-suggestion/issues"
+  }
+}
